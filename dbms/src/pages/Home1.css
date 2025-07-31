@@ -1,0 +1,118 @@
+.home-background {
+  min-height: 100vh; /* Changed from height to min-height */
+  width: 100vw;
+  background: linear-gradient(to right, #e0f7fa, #e1bee7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.home-header {
+  margin-bottom: 6%;
+}
+
+.logo {
+  max-width: 220px;
+  height: 200px;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  color: #555;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.home-content h1 {
+  color: #0d47a1;
+  font-size: 3rem;
+  margin-bottom: 1rem; 
+  margin-top: auto;
+}
+
+.home-content p {
+  color: #424242;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  background-color: #0d47a1;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #1565c0;
+}
+
+.signup {
+  background-color: #4caf50;
+}
+
+.signup:hover {
+  background-color: #388e3c;
+}
+
+.footer {
+  margin-top: auto;
+  color: #666;
+  font-size: 0.9rem;
+  padding-top: 2rem;
+}
+
+/* NEW SECTION: Motto / Mission Statement */
+.motto-section {
+  background: #ffffffc9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem auto 2rem auto;
+  max-width: 650px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.motto-section h3 {
+  font-size: 1.4rem;
+  color: #1a237e;
+  margin-bottom: 0.8rem;
+}
+
+.motto-section p {
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.6;
+}
+.gmail-link {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.gmail-link a {
+  color: #b3aeae;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.gmail-link a:hover {
+  color: #0f102b;
+  text-decoration: underline;
+}

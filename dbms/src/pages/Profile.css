@@ -1,0 +1,288 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  width: 100vw;
+  padding: 0;
+  background: linear-gradient(to right, #e0f7fa, #e1bee7);
+}
+
+.profile-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.sidebar {
+  background-color: #2e3b4e;
+  color: white;
+  width: 250px;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #f9a825;
+}
+
+.sidebar nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin: 10px 0;
+}
+
+.sidebar nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.sidebar nav ul li a:hover {
+  background-color: #f9a825;
+}
+
+.profile-content {
+  flex-grow: 1;
+  background-color: white;
+  padding: 40px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-right: 20px;
+  object-fit: cover;
+  background-color: #0c0e10;
+}
+
+.header div {
+  max-width: 600px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.header p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.dashboard-section {
+  margin-bottom: 30px;
+}
+
+.dashboard-section h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.info-list li {
+  background-color: #f9f9f9;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-list li:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+.info-list li a {
+  text-decoration: none;
+  color: #f9a825;
+  font-weight: bold;
+}
+
+.info-list li a:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .profile-content {
+    padding: 20px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-pic {
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .dashboard-section h2 {
+    font-size: 20px;
+  }
+
+  .info-list li {
+    font-size: 14px;
+  }
+}
+.dashboard-section p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.dashboard-section h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+.dashboard-section p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.dashboard-section h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+.description-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.save-description-btn,
+.edit-description-btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.save-description-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.edit-description-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+.profile-img-container {
+  width: 80px;
+  height: 80px;
+  background-color: #0078d4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.profile-initial {
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.dashboard-section {
+  margin-top: 20px;
+}
+
+.info-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.description-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.save-description-btn, .edit-description-btn {
+  padding: 8px 15px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-description-btn:hover, .edit-description-btn:hover {
+  background-color: #005a9c;
+}

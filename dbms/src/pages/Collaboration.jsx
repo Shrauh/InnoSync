@@ -30,6 +30,7 @@ const Collaboration = () => {
     },
     {
       name: 'SP',
+      
       email: 'sp@gmail.com',
       department: 'EE',
       role: 'student',

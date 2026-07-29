@@ -1,85 +1,63 @@
-import React, { useState, useEffect } from "react";
-import "./Notifications.css"; // Import your CSS file
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./Notifications.css";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Sample dummy notifications
-  const dummyNotifications = [
-    {
-      sender_name: "Rahul Mehra",
-      sender_email: "rahul.mehra@example.com",
-      message: "I would like to collaborate with you on the AI research project.",
-    },
-    {
-      sender_name: "Anjali Sharma",
-      sender_email: "anjali.sharma@example.com",
-      message: "Interested in working together on a web development assignment.",
-    },
-    {
-      sender_name: "Amitabh Iyer",
-      sender_email: "amitabh.iyer@example.com",
-      message: "Let's collaborate on the machine learning module implementation.",
-    },
-    {
-      sender_name: "Neha Reddy",
-      sender_email: "neha.reddy@example.com",
-      message: "I would love to join your team for the IoT-based project.",
-    },
-    {
-      sender_name: "Karan Thakur",
-      sender_email: "karan.thakur@example.com",
-      message: "Let's discuss joining forces for the cybersecurity research.",
-    },
-  ];
-  
+  const [loading, setLoading] = useState(true);
+  const email = localStorage.getItem("userEmail");
 
   useEffect(() => {
-    setLoading(false); // Assuming data is already available for now
-    setNotifications(dummyNotifications); // Set dummy notifications
-  }, []);
+    if (!email) return;
+    axios.get(`/api/notifications?email=${email}`)
+      .then(res => setNotifications(res.data))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
+  }, [email]);
 
-  const handleResponse = (sender, status) => {
-    alert(`${status} request from ${sender}`);
+  const handleResponse = async (senderEmail, status) => {
+    try {
+      await axios.post("/api/respond-request", {
+        sender_email: senderEmail,
+        receiver_email: email,
+        status,
+      });
+      alert(`Request ${status}!`);
+      setNotifications(notifications.filter(n => n.sender_email !== senderEmail));
+    } catch {
+      alert("Failed to respond");
+    }
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
+  if (loading) return <div className="container" style={{paddingTop:"4rem",textAlign:"center"}}><div className="spinner"></div></div>;
 
   return (
-    <div className="notifications-container">
-      <h2>Collaboration Requests</h2>
-      {notifications.length > 0 ? (
-        notifications.map((notification, index) => (
-          <div key={index} className="notification-item">
-            <p>
-              <strong>{notification.sender_name}</strong> {notification.message}
-            </p>
-            <div className="notification-actions">
-              <button
-                onClick={() => handleResponse(notification.sender_name, "Accepted")}
-                className="accept-btn"
-              >
-                Accept
-              </button>
-              <button
-                onClick={() => handleResponse(notification.sender_name, "Rejected")}
-                className="reject-btn"
-              >
-                Reject
-              </button>
-            </div>
-          </div>
-        ))
+    <div className="container slide-up" style={{ maxWidth: "800px", paddingTop: "2rem" }}>
+      <h1 className="page-title">🔔 Notifications</h1>
+
+      {notifications.length === 0 ? (
+        <div className="glass-card empty-state">
+          <div className="empty-icon">🔔</div>
+          <p>No pending requests</p>
+        </div>
       ) : (
-        <p className="no-notifications">No new notifications</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {notifications.map((n, idx) => (
+            <div key={idx} className="glass-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <div className="avatar">{(n.sender_name || n.sender_email || "?").charAt(0)}</div>
+                <div>
+                  <p style={{ fontWeight: 600 }}>{n.sender_name || n.sender_email}</p>
+                  <p style={{ color: "#a0a0b0", fontSize: "0.85rem" }}>wants to collaborate</p>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button className="btn-success" onClick={() => handleResponse(n.sender_email, "accepted")}>✓ Accept</button>
+                <button className="btn-danger" onClick={() => handleResponse(n.sender_email, "rejected")}>✕ Reject</button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

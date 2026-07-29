@@ -1,133 +1,73 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Profile.css';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [description, setDescription] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
     if (email) {
-      // Fetch user data from backend
-      fetch(`http://127.0.0.1:8000/api/user?email=${email}`)
+      fetch(`/api/user?email=${email}`)
         .then(res => res.json())
         .then(data => {
-          console.log("Fetched user data:", data);
-
-          // Ensure skills and interests are arrays (in case they're not)
-          data.skills = Array.isArray(data.skills) ? data.skills : [data.skills];
-          data.interests = Array.isArray(data.interests) ? data.interests : [data.interests];
-          
+          data.skills = Array.isArray(data.skills) ? data.skills : [data.skills].filter(Boolean);
+          data.interests = Array.isArray(data.interests) ? data.interests : [data.interests].filter(Boolean);
           setUser(data);
-          setDescription(data.description || ''); // Set description if available
         })
         .catch(err => console.error("Failed to fetch user:", err));
     }
   }, []);
 
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
+  if (!user) return <div className="container" style={{ paddingTop: "4rem", textAlign: "center" }}><div className="spinner"></div></div>;
 
-  const handleSaveDescription = () => {
-    const email = localStorage.getItem("userEmail");
-    fetch(`http://127.0.0.1:8000/api/user/update-description?email=${email}&description=${description}`, {
-      method: 'PUT',
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log('Description updated', data);
-        setIsEditing(false);
-      })
-      .catch(err => console.error('Error updating description', err));
-  };
-
-  if (!user) return <div>Loading...</div>;
-  if (!user.role || !user.name || !user.email) return <div>Error: User data is invalid</div>;
-
-  const profileInitial = user.name ? user.name.charAt(0).toUpperCase() : "U";
+  const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="profile-container">
-      <aside className="sidebar">
-        <div className="logo">🎓 CollabHub</div>
-        <nav>
-          <ul>
-            <li><a href="/profile">Dashboard</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/Myteam">My Team</a></li>
-            <li><a href="/collaboration">Collaboration</a></li>
-            <li><a href="/faculty">Faculty</a></li>
-            <li><a href="/Notifications">Notifications</a></li>
-            <li><a href="/login">Logout</a></li>
-          </ul>
-        </nav>
-      </aside>
-
-      <main className="profile-content">
-        <div className="header">
-          {/* Profile image container */}
-          <div className="profile-img-container">
-            <span className="profile-initial">{profileInitial}</span>
-          </div>
-          <div>
-            <h1>Welcome, {user.name}</h1>
-            <p>Dept: {user.department || "N/A"}</p>
-            <p>
-              Email: <a href={`mailto:${user.email}`}>{user.email}</a>
-            </p>
-            <p>Role: {user.role}</p>
-            {user.mentor && <p>Mentor: {user.mentor}</p>}
-          </div>
+    <div className="container slide-up" style={{ maxWidth: "800px", paddingTop: "2rem" }}>
+      {/* Avatar Card */}
+      <div className="glass-card" style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+        <div className="avatar avatar-lg" style={{ margin: "0 auto 1rem" }}>
+          {user.profile_pic_path
+            ? <img src={`/uploads/${user.profile_pic_path.replace("uploads/","")}`} alt="" />
+            : initial}
         </div>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700 }}>{user.name}</h2>
+        <p style={{ color: "#a0a0b0" }}>{user.email}</p>
+        <span className="badge" style={{ marginTop: "0.5rem" }}>{user.role}</span>
+      </div>
 
-        {user.role === "student" && (
-          <>
-            <Section title="🛠 Skills">
-              <ul className="info-list">
-                {(user.skills || []).map((skill, idx) => <li key={idx}>{skill}</li>)}
-              </ul>
-            </Section>
-
-            <Section title="🎯 Interests">
-              <ul className="info-list">
-                {(user.interests || []).map((interest, idx) => <li key={idx}>{interest}</li>)}
-              </ul>
-            </Section>
-          </>
-        )}
-
-        {/* Add Description Section */}
-        <Section title="📝 Description">
-          {isEditing ? (
-            <div>
-              <textarea
-                value={description}
-                onChange={handleDescriptionChange}
-                rows="5"
-                placeholder="Add a description about yourself..."
-                className="description-textarea"
-              />
-              <button onClick={handleSaveDescription} className="save-description-btn">Save</button>
+      {/* Details Card */}
+      <div className="glass-card">
+        <h3 className="page-title" style={{ fontSize: "1.2rem", marginBottom: "1.2rem" }}>Profile Details</h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+          <InfoRow label="🏫 Department" value={user.department} />
+          <InfoRow label="🛠 Skills" value={
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+              {(user.skills || []).map((s, i) => <span key={i} className="tag">{s}</span>)}
+              {(!user.skills || user.skills.length === 0) && <span style={{color:"#666"}}>Not set</span>}
             </div>
-          ) : (
-            <div>
-              <p>{description || 'No description available'}</p>
-              <button onClick={() => setIsEditing(true)} className="edit-description-btn">Edit</button>
+          } />
+          <InfoRow label="🎯 Interests" value={
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+              {(user.interests || []).map((s, i) => <span key={i} className="tag tag-pink">{s}</span>)}
+              {(!user.interests || user.interests.length === 0) && <span style={{color:"#666"}}>Not set</span>}
             </div>
-          )}
-        </Section>
-      </main>
+          } />
+          {user.mentor && <InfoRow label="👨‍🏫 Mentor" value={typeof user.mentor === 'object' ? user.mentor.name : user.mentor} />}
+          {user.linkedin && <InfoRow label="🔗 LinkedIn" value={
+            <a href={user.linkedin} target="_blank" rel="noreferrer" style={{ color: "#6c63ff" }}>{user.linkedin}</a>
+          } />}
+        </div>
+      </div>
     </div>
   );
 }
 
-function Section({ title, children }) {
+function InfoRow({ label, value }) {
   return (
-    <div className="dashboard-section">
-      <h2>{title}</h2>
-      {children}
+    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+      <span style={{ color: "#a0a0b0", fontSize: "0.85rem", minWidth: "120px" }}>{label}</span>
+      <div style={{ fontWeight: 500 }}>{value || "—"}</div>
     </div>
   );
 }

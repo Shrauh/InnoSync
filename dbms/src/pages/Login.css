@@ -1,107 +1,12 @@
-/* Login Container */
 .login-container {
-  height: 100vh;
-  width: 100vw;
-  background: linear-gradient(to right, #e3f2fd, #f3e5f5);
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
+  padding: 1rem;
 }
-
-/* Login Box */
 .login-box {
-  background-color: white;
-  padding: 2rem 3rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 450px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* Heading */
-.login-box h2 {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #0d47a1;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-/* Input Fields */
-.login-box input {
-  width: 100%;
-  padding: 0.9rem;
-  margin-bottom: 1.2rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-/* Focused Input Fields */
-.login-box input:focus {
-  border-color: #4caf50;
-  outline: none;
-}
-
-/* Submit Button */
-.login-box button {
-  width: 100%;
-  padding: 0.9rem;
-  background-color: #0d47a1;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover Effect on Button */
-.login-box button:hover {
-  background-color: #1565c0;
-}
-
-/* Disabled Button State */
-.login-box button:disabled {
-  background-color: #90caf9;
-  cursor: not-allowed;
-}
-
-/* Error Message Styling */
-.error-message {
-  color: #d32f2f;
-  background-color: #ffebee;
-  border: 1px solid #f44336;
-  padding: 0.8rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* Responsive Design */
-@media (max-width: 500px) {
-  .login-box {
-    padding: 1.5rem;
-  }
-
-  .login-box h2 {
-    font-size: 1.7rem;
-  }
-
-  .login-box input {
-    padding: 0.8rem;
-  }
-
-  .login-box button {
-    padding: 0.8rem;
-    font-size: 1rem;
-  }
+  max-width: 420px;
 }

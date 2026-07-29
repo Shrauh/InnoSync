@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing import List
-from Database import get_users_collection  # Import the function to get the collection
+from Database import get_users_collection
 
 router = APIRouter()
 
@@ -10,7 +10,8 @@ async def get_user_by_email(email: str):
     user = users_collection.find_one({"email": email})
     return user
 
-@router.get("/api/students", response_model=List[dict])
+# FIX: Removed duplicate /api prefix (main.py already adds /api)
+@router.get("/students", response_model=List[dict])
 async def get_students_based_on_interests(email: str = Query(...)):
     """
     Fetch students with shared interests with the user identified by `email`.
@@ -41,8 +42,9 @@ async def get_students_based_on_interests(email: str = Query(...)):
             "name": student.get("name"),
             "department": student.get("department"),
             "interests": student.get("interests"),
+            "skills": student.get("skills", []),
             "profile_img": student.get("profile_img"),
+            "profile_pic_path": student.get("profile_pic_path"),
         })
     
     return result
-

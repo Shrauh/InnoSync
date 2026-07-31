@@ -1,50 +1,47 @@
+"""
+Students route — fetch students with shared interests.
+"""
 from fastapi import APIRouter, Query, HTTPException
-from typing import List
-from Database import get_users_collection
+from Database import users_collection
 
 router = APIRouter()
 
-# Helper function to fetch the current user's data
-async def get_user_by_email(email: str):
-    users_collection = get_users_collection()
-    user = users_collection.find_one({"email": email})
-    return user
 
-# FIX: Removed duplicate /api prefix (main.py already adds /api)
-@router.get("/students", response_model=List[dict])
-async def get_students_based_on_interests(email: str = Query(...)):
+@router.get("/students")
+async def get_all_students(email: str = Query(None)):
     """
-    Fetch students with shared interests with the user identified by `email`.
+    Get all students. If email is provided, returns students
+    with shared interests (excluding the requesting user).
     """
-    # Fetch the current user's data from the database
-    user = await get_user_by_email(email)
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Get the current user's interests
-    user_interests = user.get("interests", [])
+    if email:
+        user = users_collection.find_one({"email": email})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    if not user_interests:
-        return []  # If no interests, return an empty list
-
-    # Query students with shared interests, excluding the current user
-    users_collection = get_users_collection()
-    students = users_collection.find({
-        "email": {"$ne": email},  # Exclude the current user
-        "interests": {"$in": user_interests},  # Check for shared interests
-    })
+        user_interests = user.get("interests", [])
+        if user_interests:
+            students = list(users_collection.find({
+                "email": {"$ne": email},
+                "role": "student",
+                "interests": {"$in": user_interests},
+            }))
+        else:
+            students = list(users_collection.find({
+                "email": {"$ne": email},
+                "role": "student",
+            }))
+    else:
+        students = list(users_collection.find({"role": "student"}))
 
     result = []
-    for student in students:
+    for s in students:
         result.append({
-            "email": student.get("email"),
-            "name": student.get("name"),
-            "department": student.get("department"),
-            "interests": student.get("interests"),
-            "skills": student.get("skills", []),
-            "profile_img": student.get("profile_img"),
-            "profile_pic_path": student.get("profile_pic_path"),
+            "email": s.get("email"),
+            "name": s.get("name"),
+            "department": s.get("department"),
+            "interests": s.get("interests", []),
+            "skills": s.get("skills", []),
+            "profile_pic_path": s.get("profile_pic_path"),
+            "linkedin": s.get("linkedin", ""),
         })
-    
     return result

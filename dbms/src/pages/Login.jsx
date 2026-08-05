@@ -1,6 +1,6 @@
-import './Login.css';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import './Signup.css'; /* Share auth styles */
 
 export default function Login() {
   const navigate = useNavigate();
@@ -8,57 +8,49 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    setError('');
-  };
+  const handleChange = (e) => { setFormData(prev => ({ ...prev, [e.target.name]: e.target.value })); setError(''); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('/auth/login', {
+      const res = await fetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
-      if (response.ok) {
+      const data = await res.json();
+      if (res.ok) {
         localStorage.setItem("userRole", data.user.role);
         localStorage.setItem("userEmail", data.user.email);
         localStorage.setItem("userName", data.user.name);
         navigate(data.user.role === "faculty" ? '/faculty/dashboard' : '/profile');
       } else {
-        setError(data.detail || "Invalid login credentials.");
+        setError(data.detail || "Invalid credentials");
       }
-    } catch {
-      setError("Server error. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError("Server error. Try again."); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box glass-card">
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          <div style={{ fontSize: "3rem" }}>⚡</div>
-          <h2 className="gradient-text" style={{ fontSize: "1.8rem", fontWeight: 800 }}>InnoSync</h2>
-          <p style={{ color: "#a0a0b0", marginTop: "0.3rem" }}>Welcome back, innovator</p>
+    <div className="auth-page">
+      <div className="auth-bg"><div className="orb orb-1"></div><div className="orb orb-2"></div></div>
+      <div className="auth-card">
+        <div className="auth-header">
+          <span style={{ fontSize: "2.5rem" }}>⚡</span>
+          <h2 className="gradient-text-animated" style={{ fontSize: "1.6rem", fontWeight: 800 }}>Welcome Back</h2>
+          <p style={{ color: "#666", fontSize: "0.9rem" }}>Sign in to your InnoSync account</p>
         </div>
         {error && <div className="error-msg">{error}</div>}
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <input className="input-field" type="email" name="email" placeholder="Email Address"
-            value={formData.email} onChange={handleChange} required />
-          <input className="input-field" type="password" name="password" placeholder="Password"
-            value={formData.password} onChange={handleChange} required />
-          <button className="btn-primary" type="submit" disabled={loading}
-            style={{ width: "100%", justifyContent: "center", padding: "0.85rem" }}>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <input className="input-field" type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required autoFocus />
+          <input className="input-field" type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+          <button className="cta-primary auth-btn" type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign In →"}
           </button>
         </form>
-        <p style={{ marginTop: "1.5rem", color: "#a0a0b0", textAlign: "center" }}>
-          Don't have an account? <Link to="/signup" style={{ color: "#6c63ff", fontWeight: 600 }}>Sign Up</Link>
+        <p className="auth-footer">
+          Don't have an account? <Link to="/signup">Create one</Link>
         </p>
       </div>
     </div>

@@ -1,12 +1,1 @@
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
-  padding: 1rem;
-}
-.login-box {
-  width: 100%;
-  max-width: 420px;
-}
+/* Login uses shared auth styles from Signup.css */

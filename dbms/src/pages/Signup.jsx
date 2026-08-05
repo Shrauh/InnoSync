@@ -1,86 +1,87 @@
-import './Signup.css';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import './Signup.css';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     name: '', email: '', password: '', department: '', role: 'student',
     skills: '', interest: '', linkedin: '', achievements: '', past_projects: ''
   });
-  const [profilePic, setProfilePic] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); setError(''); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (step === 1) {
+      if (!form.name || !form.email || !form.password) { setError("Fill all fields"); return; }
+      setStep(2);
+      return;
+    }
     setLoading(true);
-    setError('');
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([k, v]) => formData.append(k, v));
-      if (profilePic) formData.append("profile_pic", profilePic);
-
-      await fetch('/auth/signup', { method: 'POST', body: formData });
-      navigate('/login');
-    } catch {
-      setError("Signup failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch('/auth/signup', { method: 'POST', body: formData });
+      if (res.ok) navigate('/login');
+      else { const d = await res.json(); setError(d.detail || "Signup failed"); }
+    } catch { setError("Server error"); }
+    finally { setLoading(false); }
   };
 
-  const fields = [
-    { name: "name", placeholder: "Full Name", required: true },
-    { name: "email", placeholder: "Email", type: "email", required: true },
-    { name: "password", placeholder: "Password", type: "password", required: true },
-    { name: "department", placeholder: "Department (e.g. CSE, IT, ME)", required: true },
-    { name: "skills", placeholder: "Skills (comma separated)" },
-    { name: "interest", placeholder: "Interests (comma separated)" },
-    { name: "linkedin", placeholder: "LinkedIn URL" },
-    { name: "achievements", placeholder: "Achievements" },
-    { name: "past_projects", placeholder: "Past Projects" },
-  ];
-
   return (
-    <div className="signup-container">
-      <div className="glass-card" style={{ width: "100%", maxWidth: "500px" }}>
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          <div style={{ fontSize: "2.5rem" }}>⚡</div>
-          <h2 className="gradient-text" style={{ fontSize: "1.7rem", fontWeight: 800 }}>Join InnoSync</h2>
-          <p style={{ color: "#a0a0b0", fontSize: "0.9rem" }}>Start collaborating today</p>
+    <div className="auth-page">
+      <div className="auth-bg"><div className="orb orb-1"></div><div className="orb orb-2"></div></div>
+      <div className="auth-card">
+        <div className="auth-header">
+          <span style={{ fontSize: "2.5rem" }}>⚡</span>
+          <h2 className="gradient-text-animated" style={{ fontSize: "1.6rem", fontWeight: 800 }}>
+            {step === 1 ? "Create Account" : "Almost Done!"}
+          </h2>
+          <p style={{ color: "#666", fontSize: "0.9rem" }}>
+            {step === 1 ? "Step 1 of 2 — Your basics" : "Step 2 of 2 — Your expertise"}
+          </p>
+          <div className="step-dots">
+            <div className={`dot ${step >= 1 ? 'active' : ''}`}></div>
+            <div className={`dot ${step >= 2 ? 'active' : ''}`}></div>
+          </div>
         </div>
 
         {error && <div className="error-msg">{error}</div>}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
-          {fields.map(f => (
-            <input key={f.name} className="input-field" name={f.name} type={f.type || "text"}
-              placeholder={f.placeholder} value={form[f.name]} onChange={handleChange} required={f.required} />
-          ))}
-
-          <select className="input-field" name="role" value={form.role} onChange={handleChange}>
-            <option value="student">Student</option>
-            <option value="faculty">Faculty</option>
-          </select>
-
-          <div style={{ border: "1px dashed #2a2a3e", borderRadius: "12px", padding: "0.7rem", textAlign: "center", color: "#a0a0b0", cursor: "pointer" }}>
-            <label style={{ cursor: "pointer" }}>
-              {profilePic ? `📷 ${profilePic.name}` : "📷 Upload Profile Picture"}
-              <input type="file" accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} style={{ display: "none" }} />
-            </label>
-          </div>
-
-          <button className="btn-primary" type="submit" disabled={loading}
-            style={{ width: "100%", justifyContent: "center", padding: "0.8rem" }}>
-            {loading ? "Creating Account..." : "Create Account →"}
-          </button>
+        <form onSubmit={handleSubmit} className="auth-form">
+          {step === 1 ? (
+            <>
+              <input className="input-field" name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required autoFocus />
+              <input className="input-field" name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+              <input className="input-field" name="password" type="password" placeholder="Password (min 6 chars)" value={form.password} onChange={handleChange} required minLength={6} />
+              <select className="input-field" name="role" value={form.role} onChange={handleChange}>
+                <option value="student">🎓 Student</option>
+                <option value="faculty">👨‍🏫 Faculty</option>
+              </select>
+              <button className="cta-primary auth-btn" type="submit">Continue →</button>
+            </>
+          ) : (
+            <>
+              <input className="input-field" name="department" placeholder="Department (e.g. CSE, IT, ME)" value={form.department} onChange={handleChange} required autoFocus />
+              <input className="input-field" name="skills" placeholder="Skills — React, Python, ML (comma separated)" value={form.skills} onChange={handleChange} />
+              <input className="input-field" name="interest" placeholder="Interests — AI, Web Dev, IoT (comma separated)" value={form.interest} onChange={handleChange} />
+              <input className="input-field" name="linkedin" placeholder="LinkedIn URL (optional)" value={form.linkedin} onChange={handleChange} />
+              <div style={{ display: "flex", gap: "0.8rem" }}>
+                <button type="button" className="cta-secondary" onClick={() => setStep(1)} style={{ flex: 1, textAlign: "center", cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", background: "transparent", color: "#a0a0b0", fontFamily: "inherit", fontSize: "0.95rem" }}>← Back</button>
+                <button className="cta-primary auth-btn" type="submit" disabled={loading} style={{ flex: 2 }}>
+                  {loading ? "Creating..." : "Create Account 🚀"}
+                </button>
+              </div>
+            </>
+          )}
         </form>
 
-        <p style={{ marginTop: "1rem", color: "#a0a0b0", textAlign: "center", fontSize: "0.9rem" }}>
-          Already have an account? <Link to="/login" style={{ color: "#6c63ff", fontWeight: 600 }}>Sign In</Link>
+        <p className="auth-footer">
+          Already have an account? <Link to="/login">Sign In</Link>
         </p>
       </div>
     </div>
